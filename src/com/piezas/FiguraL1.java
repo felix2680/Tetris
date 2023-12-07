@@ -23,6 +23,4 @@ public class FiguraL1 extends Figura {
         bloques[3].posX = bloques[0].posX + Bloque.TAMANO;
         bloques[3].posY = bloques[2].posY;
     }
-    
-    
 }

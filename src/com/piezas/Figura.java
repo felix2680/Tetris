@@ -1,5 +1,6 @@
 package com.piezas;
 
+import com.interfaz.EscuchadorEventos;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
@@ -27,7 +28,7 @@ public class Figura {
     public void setXY(int x, int y) {
     }
 
-    public void actualizarXY(int direccion) {
+    public void girar(int direccion) {
     }
 
     public void mover() {
@@ -38,6 +39,31 @@ public class Figura {
             bloques[2].posY += Bloque.TAMANO;
             bloques[3].posY += Bloque.TAMANO;
             contadorDesplazamiento = 0;
+        }
+        if (EscuchadorEventos.teclaAbajoPresionada) {
+            bloques[0].posY += Bloque.TAMANO;
+            bloques[1].posY += Bloque.TAMANO;
+            bloques[2].posY += Bloque.TAMANO;
+            bloques[3].posY += Bloque.TAMANO;
+
+            contadorDesplazamiento = 0;
+            EscuchadorEventos.teclaAbajoPresionada = false;
+        }
+
+        if (EscuchadorEventos.teclaDerechaPresionada) {
+            bloques[0].posX += Bloque.TAMANO;
+            bloques[1].posX += Bloque.TAMANO;
+            bloques[2].posX += Bloque.TAMANO;
+            bloques[3].posX += Bloque.TAMANO;
+            EscuchadorEventos.teclaDerechaPresionada = false;
+        }
+
+        if (EscuchadorEventos.teclaIzquierdaPresionada) {
+            bloques[0].posX -= Bloque.TAMANO;
+            bloques[1].posX -= Bloque.TAMANO;
+            bloques[2].posX -= Bloque.TAMANO;
+            bloques[3].posX -= Bloque.TAMANO;
+            EscuchadorEventos.teclaIzquierdaPresionada = false;
         }
     }
 

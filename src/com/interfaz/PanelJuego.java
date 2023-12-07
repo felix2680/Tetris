@@ -1,7 +1,6 @@
 package com.interfaz;
 
 import com.piezas.Figura;
-import com.piezas.FiguraL1;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -19,18 +18,19 @@ public class PanelJuego extends JPanel implements Runnable {
     //variables para el juego
     private boolean ejecutando;
     private Thread hiloJuego;
-    private final Figura figura;
+    private ManejadorJuego manejador;
 
     public PanelJuego() {
         setPreferredSize(new Dimension(ANCHO, ALTO));
         setBackground(Color.black);
         setLayout(null);
-        figura = new FiguraL1();
-        figura.setXY(200, 20);
+        manejador = new ManejadorJuego();
+        this.addKeyListener(new EscuchadorEventos());
+        this.setFocusable(true);
     }
 
     public void actualizar() {
-        figura.mover();
+        manejador.actualizar();
     }
 
     public void empezarJuego() {
@@ -43,9 +43,7 @@ public class PanelJuego extends JPanel implements Runnable {
         super.paintComponent(g);
 
         Graphics2D g2d = (Graphics2D) g;
-        if (figura != null) {
-            figura.dibujar(g2d);
-        }
+        manejador.dibujar(g2d);
     }
 
     @Override
