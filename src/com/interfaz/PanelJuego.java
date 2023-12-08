@@ -1,6 +1,5 @@
 package com.interfaz;
 
-import com.piezas.Figura;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Graphics;
@@ -13,8 +12,8 @@ import javax.swing.JPanel;
  */
 public class PanelJuego extends JPanel implements Runnable {
 
-    public final int ANCHO = 1280;
-    public final int ALTO = 620;
+    public static final int ANCHO = 1280;
+    public static final int ALTO = 620;
     //variables para el juego
     private boolean ejecutando;
     private Thread hiloJuego;
