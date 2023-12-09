@@ -95,14 +95,23 @@ public class Figura {
             EscuchadorEventos.teclaArribaPresionada = false;
         }
         if (EscuchadorEventos.teclaEspacioPrecionada) {
-            // Calcular y aplicar el desplazamiento hacia abajo de la figura
-            int espacioDisponible = ManejadorJuego.limiteInferior - bloques[2].posY - Bloque.TAMANO;
-            int desplazamientoDeseado = ManejadorJuego.limiteInferior;
-            int desplazamientoReal = Math.min(desplazamientoDeseado, espacioDisponible);
-            bloques[0].posY += desplazamientoReal;
-            bloques[1].posY += desplazamientoReal;
-            bloques[2].posY += desplazamientoReal;
-            bloques[3].posY += desplazamientoReal;
+            // Identificar cuál bloque determina el espacio disponible
+            int bloqueBase = switch (direccion) {
+                case 2 ->
+                    3;
+                case 3 ->
+                    1;
+                default ->
+                    2;
+            };
+            // Calcular el espacio disponible y aplicar el desplazamiento hacia abajo de la figura
+            int espacioDisponible = ManejadorJuego.limiteInferior - bloques[bloqueBase].posY - Bloque.TAMANO;
+            int desplazamientoReal = Math.min(ManejadorJuego.limiteInferior, espacioDisponible);
+            // Aplicar el desplazamiento a cada bloque
+            for (Bloque bloque : bloques) {
+                bloque.posY += desplazamientoReal;
+            }
+            
             contadorDesplazamiento = 0;
             EscuchadorEventos.teclaEspacioPrecionada = false;
         }
