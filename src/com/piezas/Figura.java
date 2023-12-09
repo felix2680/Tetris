@@ -111,7 +111,7 @@ public class Figura {
             for (Bloque bloque : bloques) {
                 bloque.posY += desplazamientoReal;
             }
-            
+
             contadorDesplazamiento = 0;
             EscuchadorEventos.teclaEspacioPrecionada = false;
         }
@@ -159,16 +159,28 @@ public class Figura {
     /**
      * Dibuja la figura en el lienzo.
      *
-     * @param g2d Objeto Graphics2D para dibujar la figura.
+     * @param g2d
      */
     public void dibujar(Graphics2D g2d) {
+        int TAMANO = Bloque.TAMANO;
         int MARGEN = 2;
-        g2d.setColor(bloques[0].color);
+        for (Bloque bloque : bloques) {
+            // Obtener el color original
+            Color colorOriginal = bloque.color;
 
-        // Dibujar cada bloque de la figura
-        g2d.fillRect(bloques[0].posX + MARGEN, bloques[0].posY + MARGEN, Bloque.TAMANO - MARGEN, Bloque.TAMANO - MARGEN);
-        g2d.fillRect(bloques[1].posX + MARGEN, bloques[1].posY + MARGEN, Bloque.TAMANO - MARGEN, Bloque.TAMANO - MARGEN);
-        g2d.fillRect(bloques[2].posX + MARGEN, bloques[2].posY + MARGEN, Bloque.TAMANO - MARGEN, Bloque.TAMANO - MARGEN);
-        g2d.fillRect(bloques[3].posX + MARGEN, bloques[3].posY + MARGEN, Bloque.TAMANO - MARGEN, Bloque.TAMANO - MARGEN);
+            // Calcular el tono más oscuro para el margen
+            int r = Math.max(0, colorOriginal.getRed() - 50);
+            int g = Math.max(0, colorOriginal.getGreen() - 50);
+            int b = Math.max(0, colorOriginal.getBlue() - 50);
+            Color colorMargen = new Color(r, g, b);
+            
+            // Dibujar el margen
+            g2d.setColor(colorMargen);
+            g2d.fillRect(bloque.posX, bloque.posY, TAMANO, TAMANO);
+
+            // Dibujar el bloque con el color original
+            g2d.setColor(colorOriginal);
+            g2d.fillRect(bloque.posX + MARGEN,bloque.posY + MARGEN, TAMANO - (2 * MARGEN), TAMANO - (2 * MARGEN));
+        }
     }
 }
