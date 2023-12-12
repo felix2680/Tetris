@@ -7,6 +7,7 @@ import com.piezas.FiguraL2;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -15,7 +16,7 @@ import java.util.Random;
  */
 public class ManejadorJuego {
 
-    private final Figura figura;
+    private Figura figura;
     final int ANCHO = 360;
     final int ALTO = 560;
 
@@ -29,7 +30,11 @@ public class ManejadorJuego {
     private int posicionInicialX;
     private int posicionInicialY;
 
+    //Lista para guardar los bloques de las figuras
+    public static ArrayList<Bloque> bloquesEstaticos;
+
     public ManejadorJuego() {
+        bloquesEstaticos = new ArrayList<>();
         // Calcular los límites al inicializar el manejador
         limiteIzquierdo = (PanelJuego.ANCHO - this.ANCHO) / 2;
         limiteDerecho = limiteIzquierdo + ANCHO;
@@ -39,7 +44,7 @@ public class ManejadorJuego {
         // Calcular la posición inicial en el centro del área de juego
         posicionInicialX = (limiteIzquierdo + limiteDerecho) / 2;
         posicionInicialY = limiteSuperior + Bloque.TAMANO;
-        System.out.println("Liimite: " + limiteDerecho);
+
         figura = generarFigura();
         figura.setXY(posicionInicialX, posicionInicialY);
     }
@@ -58,7 +63,16 @@ public class ManejadorJuego {
     }
 
     public void actualizar() {
-        figura.mover();
+        if (figura.activo) {
+            figura.mover();
+        } else {
+            bloquesEstaticos.add(figura.bloques[0]);
+            bloquesEstaticos.add(figura.bloques[1]);
+            bloquesEstaticos.add(figura.bloques[2]);
+            bloquesEstaticos.add(figura.bloques[3]);
+            figura = generarFigura();
+            figura.setXY(posicionInicialX, posicionInicialY);
+        }
     }
 
     public void dibujar(Graphics2D g2d) {
@@ -83,6 +97,11 @@ public class ManejadorJuego {
 
         if (figura != null) {
             figura.dibujar(g2d);
+        }
+        
+        //Dibuja la lista de bloques estaticos
+        for(Bloque bloque: bloquesEstaticos){
+            bloque.dibujar(g2d);
         }
     }
 }

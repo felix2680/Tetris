@@ -17,11 +17,13 @@ public class Figura {
     private final int TIEMPO_DESPLAZAMIENTO = 60;
     private int direccion;
     private boolean colisionInferior, colisionIzquierda, colisionDerecha;
+    public boolean activo;
 
     public Figura() {
         bloques = new Bloque[4];
         bloquesTemp = new Bloque[4];
         direccion = 1;
+        activo = true;
     }
 
     public void crearFigura(Color color) {
@@ -46,22 +48,26 @@ public class Figura {
     }
 
     /**
-     * Gira la figura en la dirección especificada.
+     * Gira la figura en la dirección especificada siempre y cuando no haya
+     * colisiones.
      *
      * @param direccion Dirección de giro.
      */
     public void girar(int direccion) {
-        this.direccion = direccion;
+        detectarColisionGiro();
+        if (!(colisionIzquierda) && !(colisionDerecha) && !(colisionInferior)) {
+            this.direccion = direccion;
 
-        // Actualiza las posiciones de los bloques de acuerdo a la dirección de giro.
-        bloques[0].posX = bloquesTemp[0].posX;
-        bloques[0].posY = bloquesTemp[0].posY;
-        bloques[1].posX = bloquesTemp[1].posX;
-        bloques[1].posY = bloquesTemp[1].posY;
-        bloques[2].posX = bloquesTemp[2].posX;
-        bloques[2].posY = bloquesTemp[2].posY;
-        bloques[3].posX = bloquesTemp[3].posX;
-        bloques[3].posY = bloquesTemp[3].posY;
+            // Actualiza las posiciones de los bloques de acuerdo a la dirección de giro.
+            bloques[0].posX = bloquesTemp[0].posX;
+            bloques[0].posY = bloquesTemp[0].posY;
+            bloques[1].posX = bloquesTemp[1].posX;
+            bloques[1].posY = bloquesTemp[1].posY;
+            bloques[2].posX = bloquesTemp[2].posX;
+            bloques[2].posY = bloquesTemp[2].posY;
+            bloques[3].posX = bloquesTemp[3].posX;
+            bloques[3].posY = bloquesTemp[3].posY;
+        }
     }
 
     // Métodos de dirección.
@@ -77,20 +83,77 @@ public class Figura {
     public void direccion4() {
     }
 
+    /**
+     * Detecta colisiones en los límites izquierdo, derecho e inferior con base
+     * en la posición de los bloques.
+     */
     private void detectarColisionMovimiento() {
+        // Reiniciar las banderas de colisión
         colisionDerecha = false;
         colisionInferior = false;
         colisionIzquierda = false;
-        //Detecta la colision en el limite izquierdo
+
+        detectarColisionBloquesEstaticos();
+        // Itera sobre los bloques para detectar colisiones en los límites
         for (Bloque b : bloques) {
             if (b.posX == ManejadorJuego.limiteIzquierdo) {
                 colisionIzquierda = true;
             }
-        }
-        //Detecta la colision en el limite derecho
-        for (Bloque b : bloques) {
             if (b.posX + Bloque.TAMANO == ManejadorJuego.limiteDerecho) {
                 colisionDerecha = true;
+            }
+            if (b.posY + Bloque.TAMANO == ManejadorJuego.limiteInferior) {
+                colisionInferior = true;
+            }
+        }
+    }
+
+    /**
+     * Detecta colisiones al girar la figura.
+     */
+    private void detectarColisionGiro() {
+        // Reiniciar las banderas de colisión
+        colisionDerecha = false;
+        colisionInferior = false;
+        colisionIzquierda = false;
+
+        detectarColisionBloquesEstaticos();
+        // Verificar colisiones para cada bloque temporal de la figura
+        for (Bloque b : bloquesTemp) {
+            if (b.posX < ManejadorJuego.limiteIzquierdo) {
+                colisionIzquierda = true;
+            }
+            if (b.posX + Bloque.TAMANO > ManejadorJuego.limiteDerecho) {
+                colisionDerecha = true;
+            }
+            if (b.posY + Bloque.TAMANO > ManejadorJuego.limiteInferior) {
+                colisionInferior = true;
+            }
+        }
+    }
+
+    /**
+     * Detecta colisiones con bloques estáticos.
+     */
+    private void detectarColisionBloquesEstaticos() {
+        // Reiniciar las banderas de colisión
+        colisionDerecha = false;
+        colisionInferior = false;
+        colisionIzquierda = false;
+
+        for (Bloque bloque : ManejadorJuego.bloquesEstaticos) {
+            int posicionX = bloque.posX;
+            int posicionY = bloque.posY;
+            for (Bloque b : bloques) {
+                if (b.posY == posicionY && b.posX - Bloque.TAMANO == posicionX) {
+                    colisionIzquierda = true;
+                }
+                if (b.posY == posicionY && b.posX + Bloque.TAMANO == posicionX) {
+                    colisionDerecha = true;
+                }
+                if (b.posX == posicionX && b.posY + Bloque.TAMANO == posicionY) {
+                    colisionInferior = true;
+                }
             }
         }
     }
@@ -116,13 +179,15 @@ public class Figura {
         detectarColisionMovimiento();
 
         if (EscuchadorEventos.teclaAbajoPresionada) {
-            // Mover la figura hacia abajo
-            bloques[0].posY += Bloque.TAMANO;
-            bloques[1].posY += Bloque.TAMANO;
-            bloques[2].posY += Bloque.TAMANO;
-            bloques[3].posY += Bloque.TAMANO;
+            //Si no existe colision, mueve la figura hacia abajo
+            if (!colisionInferior) {
+                bloques[0].posY += Bloque.TAMANO;
+                bloques[1].posY += Bloque.TAMANO;
+                bloques[2].posY += Bloque.TAMANO;
+                bloques[3].posY += Bloque.TAMANO;
+                contadorDesplazamiento = 0;
+            }
 
-            contadorDesplazamiento = 0;
             EscuchadorEventos.teclaAbajoPresionada = false;
         }
 
@@ -133,9 +198,8 @@ public class Figura {
                 bloques[1].posX += Bloque.TAMANO;
                 bloques[2].posX += Bloque.TAMANO;
                 bloques[3].posX += Bloque.TAMANO;
-                System.out.println(bloques[3].posX);
-                EscuchadorEventos.teclaDerechaPresionada = false;
             }
+            EscuchadorEventos.teclaDerechaPresionada = false;
         }
 
         if (EscuchadorEventos.teclaIzquierdaPresionada) {
@@ -145,18 +209,22 @@ public class Figura {
                 bloques[1].posX -= Bloque.TAMANO;
                 bloques[2].posX -= Bloque.TAMANO;
                 bloques[3].posX -= Bloque.TAMANO;
-                EscuchadorEventos.teclaIzquierdaPresionada = false;
             }
+            EscuchadorEventos.teclaIzquierdaPresionada = false;
         }
-
-        // Realizar un desplazamiento automático hacia abajo después de un tiempo específico
-        contadorDesplazamiento++;
-        if (contadorDesplazamiento == TIEMPO_DESPLAZAMIENTO) {
-            bloques[0].posY += Bloque.TAMANO;
-            bloques[1].posY += Bloque.TAMANO;
-            bloques[2].posY += Bloque.TAMANO;
-            bloques[3].posY += Bloque.TAMANO;
-            contadorDesplazamiento = 0;
+        //si hay colision inferior, desactiva el desplazamiento automatico;
+        if (colisionInferior) {
+            activo = false;
+        } else {
+            // Realizar un desplazamiento automático hacia abajo después de un tiempo específico
+            contadorDesplazamiento++;
+            if (contadorDesplazamiento == TIEMPO_DESPLAZAMIENTO) {
+                bloques[0].posY += Bloque.TAMANO;
+                bloques[1].posY += Bloque.TAMANO;
+                bloques[2].posY += Bloque.TAMANO;
+                bloques[3].posY += Bloque.TAMANO;
+                contadorDesplazamiento = 0;
+            }
         }
     }
 
