@@ -39,7 +39,7 @@ public class ManejadorJuego {
         // Calcular la posición inicial en el centro del área de juego
         posicionInicialX = (limiteIzquierdo + limiteDerecho) / 2;
         posicionInicialY = limiteSuperior + Bloque.TAMANO;
-
+        System.out.println("Liimite: " + limiteDerecho);
         figura = generarFigura();
         figura.setXY(posicionInicialX, posicionInicialY);
     }

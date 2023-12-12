@@ -10,7 +10,7 @@ import java.awt.event.KeyListener;
 public class EscuchadorEventos implements KeyListener {
 
     public static boolean teclaAbajoPresionada, teclaDerechaPresionada, teclaIzquierdaPresionada, teclaArribaPresionada;
-    public static boolean teclaEspacioPrecionada;
+    public static boolean teclaPausaPresionada;
 
     @Override
     public void keyTyped(KeyEvent e) {
@@ -22,17 +22,17 @@ public class EscuchadorEventos implements KeyListener {
         if (e.getKeyCode() == KeyEvent.VK_S) {
             teclaAbajoPresionada = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_A){
+        if (e.getKeyCode() == KeyEvent.VK_A) {
             teclaIzquierdaPresionada = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_D){
+        if (e.getKeyCode() == KeyEvent.VK_D) {
             teclaDerechaPresionada = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_W){
+        if (e.getKeyCode() == KeyEvent.VK_W) {
             teclaArribaPresionada = true;
         }
-        if(e.getKeyCode() == KeyEvent.VK_SPACE){
-            teclaEspacioPrecionada = true;
+        if (e.getKeyCode() == KeyEvent.VK_P) {
+            teclaPausaPresionada = !teclaPausaPresionada;
         }
     }
 

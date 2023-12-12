@@ -29,7 +29,9 @@ public class PanelJuego extends JPanel implements Runnable {
     }
 
     public void actualizar() {
-        manejador.actualizar();
+        if (!EscuchadorEventos.teclaPausaPresionada) {
+            manejador.actualizar();
+        }
     }
 
     public void empezarJuego() {

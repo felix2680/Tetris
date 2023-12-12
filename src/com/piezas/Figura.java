@@ -16,6 +16,7 @@ public class Figura {
     int contadorDesplazamiento;
     private final int TIEMPO_DESPLAZAMIENTO = 60;
     private int direccion;
+    private boolean colisionInferior, colisionIzquierda, colisionDerecha;
 
     public Figura() {
         bloques = new Bloque[4];
@@ -76,6 +77,24 @@ public class Figura {
     public void direccion4() {
     }
 
+    private void detectarColisionMovimiento() {
+        colisionDerecha = false;
+        colisionInferior = false;
+        colisionIzquierda = false;
+        //Detecta la colision en el limite izquierdo
+        for (Bloque b : bloques) {
+            if (b.posX == ManejadorJuego.limiteIzquierdo) {
+                colisionIzquierda = true;
+            }
+        }
+        //Detecta la colision en el limite derecho
+        for (Bloque b : bloques) {
+            if (b.posX + Bloque.TAMANO == ManejadorJuego.limiteDerecho) {
+                colisionDerecha = true;
+            }
+        }
+    }
+
     /**
      * Mueve la figura en la dirección especificada por las teclas presionadas.
      */
@@ -94,27 +113,7 @@ public class Figura {
 
             EscuchadorEventos.teclaArribaPresionada = false;
         }
-        if (EscuchadorEventos.teclaEspacioPrecionada) {
-            // Identificar cuál bloque determina el espacio disponible
-            int bloqueBase = switch (direccion) {
-                case 2 ->
-                    3;
-                case 3 ->
-                    1;
-                default ->
-                    2;
-            };
-            // Calcular el espacio disponible y aplicar el desplazamiento hacia abajo de la figura
-            int espacioDisponible = ManejadorJuego.limiteInferior - bloques[bloqueBase].posY - Bloque.TAMANO;
-            int desplazamientoReal = Math.min(ManejadorJuego.limiteInferior, espacioDisponible);
-            // Aplicar el desplazamiento a cada bloque
-            for (Bloque bloque : bloques) {
-                bloque.posY += desplazamientoReal;
-            }
-
-            contadorDesplazamiento = 0;
-            EscuchadorEventos.teclaEspacioPrecionada = false;
-        }
+        detectarColisionMovimiento();
 
         if (EscuchadorEventos.teclaAbajoPresionada) {
             // Mover la figura hacia abajo
@@ -128,21 +127,26 @@ public class Figura {
         }
 
         if (EscuchadorEventos.teclaDerechaPresionada) {
-            // Mover la figura hacia la derecha
-            bloques[0].posX += Bloque.TAMANO;
-            bloques[1].posX += Bloque.TAMANO;
-            bloques[2].posX += Bloque.TAMANO;
-            bloques[3].posX += Bloque.TAMANO;
-            EscuchadorEventos.teclaDerechaPresionada = false;
+            // si no existe colision, mueve la figura hacia a la derecha
+            if (!colisionDerecha) {
+                bloques[0].posX += Bloque.TAMANO;
+                bloques[1].posX += Bloque.TAMANO;
+                bloques[2].posX += Bloque.TAMANO;
+                bloques[3].posX += Bloque.TAMANO;
+                System.out.println(bloques[3].posX);
+                EscuchadorEventos.teclaDerechaPresionada = false;
+            }
         }
 
         if (EscuchadorEventos.teclaIzquierdaPresionada) {
-            // Mover la figura hacia la izquierda
-            bloques[0].posX -= Bloque.TAMANO;
-            bloques[1].posX -= Bloque.TAMANO;
-            bloques[2].posX -= Bloque.TAMANO;
-            bloques[3].posX -= Bloque.TAMANO;
-            EscuchadorEventos.teclaIzquierdaPresionada = false;
+            // si no existe colision, mueve la figura hacia a la izquierda
+            if (!colisionIzquierda) {
+                bloques[0].posX -= Bloque.TAMANO;
+                bloques[1].posX -= Bloque.TAMANO;
+                bloques[2].posX -= Bloque.TAMANO;
+                bloques[3].posX -= Bloque.TAMANO;
+                EscuchadorEventos.teclaIzquierdaPresionada = false;
+            }
         }
 
         // Realizar un desplazamiento automático hacia abajo después de un tiempo específico
@@ -173,14 +177,14 @@ public class Figura {
             int g = Math.max(0, colorOriginal.getGreen() - 50);
             int b = Math.max(0, colorOriginal.getBlue() - 50);
             Color colorMargen = new Color(r, g, b);
-            
+
             // Dibujar el margen
             g2d.setColor(colorMargen);
             g2d.fillRect(bloque.posX, bloque.posY, TAMANO, TAMANO);
 
             // Dibujar el bloque con el color original
             g2d.setColor(colorOriginal);
-            g2d.fillRect(bloque.posX + MARGEN,bloque.posY + MARGEN, TAMANO - (2 * MARGEN), TAMANO - (2 * MARGEN));
+            g2d.fillRect(bloque.posX + MARGEN, bloque.posY + MARGEN, TAMANO - (2 * MARGEN), TAMANO - (2 * MARGEN));
         }
     }
 }
